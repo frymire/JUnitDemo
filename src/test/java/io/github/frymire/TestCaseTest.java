@@ -1,4 +1,6 @@
 
+package io.github.frymire;
+
 import junit.framework.TestCase;
 
 // You can use TestCase directly instead of annotations.

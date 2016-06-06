@@ -1,5 +1,7 @@
 // UNCLASSIFIED
 
+package io.github.frymire;
+
 import java.util.Arrays;
 import java.util.Collection;
 

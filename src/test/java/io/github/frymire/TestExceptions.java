@@ -1,4 +1,6 @@
 
+package io.github.frymire;
+
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;

@@ -1,4 +1,6 @@
 
+package io.github.frymire;
+
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;

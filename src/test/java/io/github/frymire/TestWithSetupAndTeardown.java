@@ -1,4 +1,6 @@
 
+package io.github.frymire;
+
 import java.util.Collection;
 import java.util.ArrayList;
 

@@ -1,3 +1,6 @@
+
+package io.github.frymire;
+
 /**
  * @author mark.e.frymire
  *

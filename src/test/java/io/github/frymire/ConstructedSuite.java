@@ -1,4 +1,6 @@
 
+package io.github.frymire;
+
 import junit.framework.TestSuite;
 import junit.framework.TestResult;
 
