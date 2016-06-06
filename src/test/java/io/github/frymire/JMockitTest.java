@@ -5,6 +5,7 @@ package io.github.frymire;
 import mockit.Mocked;
 import mockit.Injectable;
 import mockit.Expectations;
+import mockit.Verifications;
 
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class JMockitTest {
 
   // Define some dependencies.
-  
+
   public class Adder {
     public int add(int a, int b) { return a + b; }
   }  
@@ -37,59 +38,61 @@ public class JMockitTest {
       result = 10;                   
     }};
 
-    // Verifying the (wrong and silly) mocked behavior to show that the 
+    // Verify the (wrong and silly) mocked behavior to show that the 
     // mock is being called, rather than real class instances. You can
     // call the same mocked invocation multiple times, even though it
     // was only defined once. These pass.
     assertEquals(10, adder1.add(1, 1));
     assertEquals(10, adder1.add(1, 1));
-    
+
   }
-  
+
   @Test public void testOrderIndependence() {
-    
-    // Mock multiple responses to specific add() calls.
+
+    // Mock responses to multiple specific add() calls.
     new Expectations() {{
-      
+
       adder2.add(2, 3);
       result = 5;
-      
+
       adder2.add(4, 5);
       result = 9;
-      
+
     }};
-    
+
     // You can call the mocked methods in any order. These pass.
     assertEquals(9, adder2.add(4, 5));
     assertEquals(5, adder2.add(2, 3));
 
   }
-  
+
   @Test public void testUncalledExpectations() {
-    
-    // If you define expectations that are never called, the test will fail.
+
+    // If you define expectations that are never called, 
+    // JMockit will throw a MissingInvocation error.
     new Expectations() {{      
       adder2.add(1, 1);
       result = 2;                   
     }};
-        
+
   }
 
 
   // @Injectable mocks one particular instance. Use this if you need to mix 
   // and match real and mocked instances, for some strange reason.
   Talker realTalker = new Talker();
-  @Injectable Talker injectedTalker;
+  @Injectable Talker fakeTalker;
+  //  @Mocked Talker fakeTalker; // Doesn't work.
 
   @Test public void testWithInjectedMock() {
 
     // Mock some behavior if someone calls sayHi() on the injectedTalker instance.
     new Expectations() {{
-      injectedTalker.sayHi();
+      fakeTalker.sayHi();
       result = "The mocked talker says hi.";
     }};
 
-    String mockedResult = injectedTalker.sayHi();
+    String mockedResult = fakeTalker.sayHi();
     assertEquals("The mocked talker says hi.", mockedResult);
 
     // If you used @Mocked instead of @Injected for the talker test double above, 
@@ -101,7 +104,9 @@ public class JMockitTest {
   }
 
 
-  // You can write mocked instances directly in test parameters, if that's more convenient.
+  // You can write mocked instances directly in test parameters. The JMockit author   
+  // prefers this approach to reduce the risk of interactions among tests. The field
+  // can't be final, though, which seems odd.
   @Test public void testInvocationsCountWithMockParameter(@Mocked Adder localAdder) {
 
     // Require that add() is called twice.
@@ -114,8 +119,47 @@ public class JMockitTest {
     // The test must call add() exactly twice.
     assertEquals(2, localAdder.add(1, 1));
     assertEquals(2, localAdder.add(1, 1)); // Fail without this.
-//    assertEquals(2, localAdder.add(1, 1)); // Fail with this.
+    //    assertEquals(2, localAdder.add(1, 1)); // Fail with this.
+
+  }
+
+  @Test public void testVerifications(@Mocked Adder localAdder) {
+
+    localAdder.add(1, 1);
     
+    // Verify that the mocked adder was called as expected.
+    new Verifications() {{
+      localAdder.add(anyInt, 1);
+    }};    
+
+  }
+  
+  @Test public void testVerifyNumberOfInvocations(@Mocked Adder localAdder) {
+    
+    localAdder.add(1, 2);
+    localAdder.add(3, 4);
+    localAdder.add(5, 6);
+    
+    // Verify that the mocked adder was called only twice. Fails.
+    new Verifications() {{
+      localAdder.add(anyInt, anyInt);
+      maxTimes = 2;
+    }};    
+
+  }
+  
+  @Test public void testVerifyConstructor() {
+    
+    // Calling the Adder() constructor will cause the following verification 
+    // to throw an UnexpectedInvocation exception.
+    (new Adder()).add(1, 1);
+
+    // Verify that no talker instance was ever constructed.
+    new Verifications() {{
+      new Adder();
+      times = 0;          
+    }};
+
   }
 
 }
