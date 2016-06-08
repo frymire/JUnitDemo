@@ -6,6 +6,7 @@ import mockit.Mocked;
 import mockit.Injectable;
 import mockit.Expectations;
 import mockit.Verifications;
+import mockit.VerificationsInOrder;
 
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class JMockitTest {
   }  
 
   public class Talker {
-    public String sayHi() { return "The real talker says hi."; }
+    public String sayHi() { return "The real talker says hi."; }    
   }
 
 
@@ -127,7 +128,8 @@ public class JMockitTest {
 
     localAdder.add(1, 1);
     
-    // Verify that the mocked adder was called as expected.
+    // Verify that the mocked adder was called as expected. You 
+    // can invoke non-mocked types here, but it's not recommended.
     new Verifications() {{
       localAdder.add(anyInt, 1);
     }};    
@@ -160,6 +162,29 @@ public class JMockitTest {
       times = 0;          
     }};
 
+  }
+  
+  @Test public void testVerifyInOrder(@Mocked Adder localAdder1, @Mocked Adder localAdder2) {
+    
+    localAdder1.add(1, 2);
+    localAdder2.add(10, 11);
+    localAdder1.add(3, 4);
+    localAdder2.add(12, 13);
+    
+    // This will fail if you change the verification order.
+    new VerificationsInOrder() {{
+      localAdder1.add(1, 2);
+      localAdder1.add(3, 4);      
+//      localAdder.add(1, 2);
+    }};
+    
+    // Even though the calls to the adders were interleaved, you can check  
+    // the order of each independently with a separate verifications block.
+    new VerificationsInOrder() {{
+      localAdder2.add(10, 11);
+      localAdder2.add(12, 13);      
+    }};
+    
   }
 
 }
