@@ -2,6 +2,9 @@
 
 package io.github.frymire;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import mockit.FullVerifications;
 import mockit.FullVerificationsInOrder;
 import mockit.Mocked;
@@ -9,15 +12,12 @@ import mockit.StrictExpectations;
 import mockit.Verifications;
 import mockit.VerificationsInOrder;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
-public class JMockitVerifications {
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
-  // Mock fields declared at the class level can be reused in any test.
-  @Mocked Adder adder1;
-  @Mocked Adder adder2;
+public class JMockitVerifications {
 
   @Test public void testVerifications(@Mocked final Adder localAdder) {
 
@@ -204,4 +204,42 @@ public class JMockitVerifications {
     
   }
   
+  @Test public void testCapturingArguments(@Mocked final Adder localAdder) {
+    
+    localAdder.add(1, 1);
+
+    // Capture the method arguments and test something specific about them.
+    new Verifications() {{
+      int first, second;
+      localAdder.add(first = withCapture(), second = withCapture());
+      assertTrue(first == second);
+    }};
+    
+  }
+  
+  @Test public void testCapturingArgumentSequences(@Mocked final Adder localAdder) {
+    
+    localAdder.add(0, 1);
+    localAdder.add(1, 1);
+    localAdder.add(2, 1);
+
+    // Capture a sequence method arguments as lists and verify their contents.
+    new Verifications() {{
+      
+      List<Integer> first = new ArrayList<Integer>();
+      List<Integer> second = new ArrayList<Integer>();      
+      localAdder.add(withCapture(first), withCapture(second));
+      
+      // Unfortunately, you can't run loops inside a Verifications() object.
+      assertTrue(first.get(0) == 0);
+      assertTrue(first.get(1) == 1);
+      assertTrue(first.get(2) == 2);
+      assertTrue(second.get(0) == 1);
+      assertTrue(second.get(1) == 1);
+      assertTrue(second.get(2) == 1);
+      
+    }};
+    
+  }
+    
 }
