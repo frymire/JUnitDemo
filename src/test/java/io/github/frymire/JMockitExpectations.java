@@ -4,6 +4,7 @@ package io.github.frymire;
 
 import mockit.Mocked;
 import mockit.Injectable;
+import mockit.Delegate;
 import mockit.Expectations;
 import mockit.StrictExpectations;
 
@@ -231,6 +232,25 @@ public class JMockitExpectations {
     assertEquals(2, localAdder.add(5,6));
     assertEquals(3, localAdder.add(7,8));
     
+  }
+  
+  @Test public void testCustomDelegate(@Mocked final Adder adder) {
+
+    // Rather than scripting exact results for specific mocked method 
+    // calls, you can define an alternative method in a delegate.
+    new Expectations() {{
+
+      adder.add(anyInt, anyInt);
+      
+      result = new Delegate<Object>() {        
+        @SuppressWarnings("unused")
+        int delegate(final int i, final int j) { return i - j; }        
+      };
+      
+    }};
+
+    assertEquals(2, adder.add(5, 3));
+
   }
     
 }
