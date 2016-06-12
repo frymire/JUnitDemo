@@ -3,7 +3,6 @@
 package io.github.frymire;
 
 import mockit.Expectations;
-import mockit.Verifications;
 
 import org.junit.Test;
 
