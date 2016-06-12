@@ -35,7 +35,7 @@ public class JMockitTestClassInjection {
   }
   
   // Alternatively, you can extend Expectations or Verifications directly.
-  final class TalkerVerifications extends Verifications {
+  final class TalkerVerifications extends Verifications { 
     TalkerVerifications() { talker.sayHi(); times = 0; }
   }    
   @After public void setTalkerVerifications() { new TalkerVerifications(); }
