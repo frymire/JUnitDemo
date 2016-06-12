@@ -212,7 +212,7 @@ public class JMockitVerifications {
     new Verifications() {{
       int first, second;
       localAdder.add(first = withCapture(), second = withCapture());
-      assertTrue(first == second);
+      assertEquals(first, second);
     }};
     
   }

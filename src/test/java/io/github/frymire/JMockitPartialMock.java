@@ -59,7 +59,7 @@ public class JMockitPartialMock {
     // Define an instance to record expectations.
     final ValueHolder mockedInstance = new ValueHolder(2);
 
-    // Pass the specific instance as a parameters to the Expectations constructor
+    // Pass the specific instance as a parameter to the Expectations constructor
     // to partially mock it without mocking other instances of the class at all.
     new Expectations(mockedInstance) {{
 

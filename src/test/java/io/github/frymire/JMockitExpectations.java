@@ -75,7 +75,7 @@ public class JMockitExpectations {
 
     }};
 
-    // This fails on the call to add(4, 5), since it must be parameterized by (2,3).
+    // This fails on the call to add(4, 5), since the first call must be parameterized by (2,3).
     assertEquals(9, adder2.add(4, 5));
 
   }
@@ -186,8 +186,8 @@ public class JMockitExpectations {
   }
     
   @Test public void testFutureInstanceExpectationsWithMultipeRecorders(
-      @Mocked final Adder recorderAdder1,
-      @Mocked final Adder recorderAdder2
+      @Mocked final Adder recorderAdderA,
+      @Mocked final Adder recorderAdderB
       ) {
     
     // To set expectations on two different subsets of future instances of a mocked 
@@ -196,13 +196,13 @@ public class JMockitExpectations {
     new Expectations() {{      
       
       new Adder("Type A");
-      result = recorderAdder1;
-      recorderAdder1.add(2, 2);
+      result = recorderAdderA;
+      recorderAdderA.add(2, 2);
       result = 5;
       
       new Adder("Type B");
-      result = recorderAdder2;      
-      recorderAdder2.add(2, 2);
+      result = recorderAdderB;      
+      recorderAdderB.add(2, 2);
       result = 6;      
       
     }};
