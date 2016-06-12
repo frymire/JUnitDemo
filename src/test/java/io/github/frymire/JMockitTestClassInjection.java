@@ -34,7 +34,8 @@ public class JMockitTestClassInjection {
     new Verifications() {{ adder.add(2, anyInt); }};
   }
   
-  // Alternatively, you can extend Expectations or Verifications directly.
+  // Alternatively, you can extend Expectations or Verifications directly. This must
+  // either be final, or end in "Expectations" or "Verifications".
   final class TalkerVerifications extends Verifications {  
     TalkerVerifications() { talker.sayHi(); times = 0; }
   }    
