@@ -17,9 +17,9 @@ import static org.junit.Assert.assertFalse;
 
 public class JMockitTestClassInjection {
 
-  // We want different test class instantiations for each test. @Tested says to   
-  // fill in constructor fields with any available @Injectable fields, either at     
-  // the class level or as a parameter for each test. 
+  // We want different test class instantiations for each test. @Tested says to fill in    
+  // constructor fields with any available @Injectable fields, either at the class level or        
+  // as a parameter for each test. Here, we need an Adder, a Talker, a boolean, and a String.
   @Tested TestMe testInstance;
   @Injectable Adder adder;
   @Injectable Talker talker;
@@ -34,8 +34,8 @@ public class JMockitTestClassInjection {
     new Verifications() {{ adder.add(2, anyInt); }};
   }
   
-  // Alternatively, you can extend Expectations or Verifications directly. This must
-  // either be final, or end in "Expectations" or "Verifications".
+  // Alternatively, you can extend Expectations or Verifications directly. This
+  // must either be final, or end in "Expectations" or "Verifications".
   final class TalkerVerifications extends Verifications {  
     TalkerVerifications() { talker.sayHi(); times = 0; }
   }    

@@ -80,6 +80,24 @@ public class JMockitExpectations {
 
   }
   
+  @Test public void testStrictExpectationsLoop() {
+
+    // If calls will be made from inside a loop, parameterize StrictExpectations
+    // with the specific number of times a sequence of calls should be made.
+    new StrictExpectations(3) {{
+      adder2.add(anyInt, 1);
+      result = 1;
+      adder2.add(anyInt, 2);
+      result = 2;
+    }};
+
+    for (int i = 0; i < 3; i++) {
+      assertEquals(1, adder2.add(i, 1));
+      assertEquals(2, adder2.add(i, 2));      
+    }
+
+  }
+  
   @Test public void testUncalledExpectations() {
 
     // If you define expectations that are never called, 

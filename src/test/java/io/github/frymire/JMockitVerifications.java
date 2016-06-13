@@ -19,31 +19,31 @@ import static org.junit.Assert.assertEquals;
 
 public class JMockitVerifications {
 
-  @Test public void testVerifications(@Mocked final Adder localAdder) {
+  @Test public void testVerifications(@Mocked final Adder adder) {
 
-    localAdder.add(1, 1);
+    adder.add(1, 1);
     
     // Verify that the mocked adder was called as expected. Also, check
     // that it wasn't invoked using unexpected parameters. You can invoke 
     // non-mocked types here, but it's not recommended.
     new Verifications() {{
-      localAdder.add(anyInt, 1);
+      adder.add(anyInt, 1);
       times = 1;
-      localAdder.add(anyDouble, anyDouble);
+      adder.add(anyDouble, anyDouble);
       times = 0;
     }};    
 
   }
   
-  @Test public void testVerifyNumberOfInvocations(@Mocked final Adder localAdder) {
+  @Test public void testVerifyNumberOfInvocations(@Mocked final Adder adder) {
     
-    localAdder.add(1, 2);
-    localAdder.add(3, 4);
-    localAdder.add(5, 6);
+    adder.add(1, 2);
+    adder.add(3, 4);
+    adder.add(5, 6);
     
     // Verify that the mocked adder was called only once or twice. Fails.
     new Verifications() {{
-      localAdder.add(anyInt, anyInt);
+      adder.add(anyInt, anyInt);
       minTimes = 1;
       maxTimes = 2;
     }};    
@@ -65,18 +65,18 @@ public class JMockitVerifications {
   }
   
   @Test public void testVerifyInOrder(
-      @Mocked final Adder localAdder1, 
-      @Mocked final Adder localAdder2) {
+      @Mocked final Adder adder1, 
+      @Mocked final Adder adder2) {
     
-    localAdder1.add(1, 2);
-    localAdder2.add(10, 11);
-    localAdder1.add(3, 4);
-    localAdder2.add(12, 13);
+    adder1.add(1, 2);
+    adder2.add(10, 11);
+    adder1.add(3, 4);
+    adder2.add(12, 13);
     
     // This will fail if you change the verification order.
     new VerificationsInOrder() {{
-      localAdder1.add(1, 2);
-      localAdder1.add(3, 4);      
+      adder1.add(1, 2);
+      adder1.add(3, 4);      
 //      localAdder.add(1, 2);
     }};
     
@@ -84,45 +84,45 @@ public class JMockitVerifications {
     // the verify other calls independently with a separate verifications block.
     // In this case, we don't care about order.
     new Verifications() {{
-      localAdder2.add(12, 13);
-      localAdder2.add(10, 11);
+      adder2.add(12, 13);
+      adder2.add(10, 11);
     }};
     
   }
   
-  @Test public void testFullVerification(@Mocked final Adder localAdder) {
+  @Test public void testFullVerification(@Mocked final Adder adder) {
     
-    localAdder.add(1, 1);
-    localAdder.add(2, 2);
-    localAdder.add(3, 3);
+    adder.add(1, 1);
+    adder.add(2, 2);
+    adder.add(3, 3);
     
     // Use full verifications to test that no unexpected calls were   
     // made. Order doesn't matter. This fails for add(3,3).
     new FullVerifications() {{
-      localAdder.add(2, 2);
-      localAdder.add(1, 1);
+      adder.add(2, 2);
+      adder.add(1, 1);
     }};
     
   }
   
-  @Test public void testFullVerificationSimplified(@Mocked final Adder localAdder) {
+  @Test public void testFullVerificationSimplified(@Mocked final Adder adder) {
     
-    localAdder.add(1, 1);
-    localAdder.add(2, 2);
-    localAdder.add(3, 3);
+    adder.add(1, 1);
+    adder.add(2, 2);
+    adder.add(3, 3);
     
     // This passes, because it covers all three cases.
     new FullVerifications() {{
-      localAdder.add(anyInt, anyInt);
+      adder.add(anyInt, anyInt);
     }};    
     
   }
   
-  @Test public void testFullVerificationInOrder(@Mocked final Adder localAdder) {
+  @Test public void testFullVerificationInOrder(@Mocked final Adder adder) {
     
-    localAdder.add(1, 1);
-    localAdder.add(2, 2);
-    localAdder.add(3, 3);
+    adder.add(1, 1);
+    adder.add(2, 2);
+    adder.add(3, 3);
     
     // For full *ordered* verifications, you can no longer match 
     // a single expectation to all calls. This would fail.
@@ -132,9 +132,9 @@ public class JMockitVerifications {
     
     // Instead, you must list each call, so that order can be checked.
     new FullVerificationsInOrder() {{
-      localAdder.add(1, 1);
-      localAdder.add(2, 2);
-      localAdder.add(3, 3);
+      adder.add(1, 1);
+      adder.add(2, 2);
+      adder.add(3, 3);
     }};
     
   }
@@ -176,7 +176,7 @@ public class JMockitVerifications {
     
   }
  
-  @Test public void testParameterMatching(@Mocked final Adder localAdder) {
+  @Test public void testParameterMatching(@Mocked final Adder adder) {
     
     // Require a method to be called with a particular parameters.
     new StrictExpectations() {{
@@ -188,7 +188,7 @@ public class JMockitVerifications {
       new Adder(withNotNull());
       new Adder(withNull());
       new Adder(withArgThat( org.hamcrest.CoreMatchers.isA(String.class) ));
-      localAdder.add(withEqual(2.0, 0.1), withEqual(3.0, 0.1));
+      adder.add(withEqual(2.0, 0.1), withEqual(3.0, 0.1));
       result = 5.0;
     }};
         
@@ -200,35 +200,35 @@ public class JMockitVerifications {
     new Adder("This isn't null.");
     new Adder(null);
     new Adder("A string.");
-    assertEquals(5.0, localAdder.add(1.95, 3.05), 0.00001);
+    assertEquals(5.0, adder.add(1.95, 3.05), 0.00001);
     
   }
   
-  @Test public void testCapturingArguments(@Mocked final Adder localAdder) {
+  @Test public void testCapturingArguments(@Mocked final Adder adder) {
     
-    localAdder.add(1, 1);
+    adder.add(1, 1);
 
     // Capture the method arguments and test something specific about them.
     new Verifications() {{
       int first, second;
-      localAdder.add(first = withCapture(), second = withCapture());
+      adder.add(first = withCapture(), second = withCapture());
       assertEquals(first, second);
     }};
     
   }
   
-  @Test public void testCapturingArgumentSequences(@Mocked final Adder localAdder) {
+  @Test public void testCapturingArgumentSequences(@Mocked final Adder adder) {
     
-    localAdder.add(0, 1);
-    localAdder.add(1, 1);
-    localAdder.add(2, 1);
+    adder.add(0, 1);
+    adder.add(1, 1);
+    adder.add(2, 1);
 
     // Capture a sequence method arguments as lists and verify their contents.
     new Verifications() {{
       
       List<Integer> first = new ArrayList<Integer>();
       List<Integer> second = new ArrayList<Integer>();      
-      localAdder.add(withCapture(first), withCapture(second));
+      adder.add(withCapture(first), withCapture(second));
       
       // Unfortunately, you can't run loops inside a Verifications() object.
       assertTrue(first.get(0) == 0);
@@ -238,6 +238,19 @@ public class JMockitVerifications {
       assertTrue(second.get(1) == 1);
       assertTrue(second.get(2) == 1);
       
+    }};
+    
+  }
+  
+  @Test public void testVerificationLoops(@Mocked final Adder adder) {
+    
+    int ITERATIONS = 20;    
+    for(int i = 0; i < ITERATIONS; i++) { adder.add(i, i); }
+    
+    // To verify code called from within a loop, pass the 
+    // number of iterations to the verifications block.
+    new Verifications(ITERATIONS) {{
+      adder.add(anyInt, anyInt);
     }};
     
   }
